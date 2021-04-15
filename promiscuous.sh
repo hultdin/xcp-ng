@@ -22,12 +22,14 @@ fi
 # set the physical interface to promiscuous mode
 if [ `xe pif-param-get uuid=${uuid} param-name=other-config param-key=promiscuous` != "true" ]; then
   echo "xe pif-param-set uuid=${uuid} other-config:promiscuous=\"true\""
+  xe pif-param-set uuid=${uuid} other-config:promiscuous="true"
 fi
 
 # set all virtual interfaces associated with the physical interface to promiscuous mode
 for uuid in `xe vif-list network-name-label=${pif} params=uuid | sed '/^\s*$/d' | awk '{print $5}'`; do
   if [ `xe vif-param-get uuid=${uuid} param-name=other-config param-key=promiscuous` != "true" ]; then
     echo "xe vif-param-set uuid=${uuid} other-config:promiscuous=\"true\""
+    xe vif-param-set uuid=${uuid} other-config:promiscuous="true"
   fi
 done
 
@@ -35,4 +37,5 @@ done
 for vif in `ovs-vsctl list-ifaces ${br} | grep -v ${pif}`; do
   echo "ovs-vsctl -- set Bridge ${br} mirrors=@m -- --id=@${pif} get Port ${pif} -- --id=@${pif} get Port ${pif} -- --id=@m create Mirror name=${pif}-mirror select-src-port=@${pif} select-dst-port=@${pif} output-port=@${vif}
 "
+  ovs-vsctl -- set Bridge ${br} mirrors=@m -- --id=@${pif} get Port ${pif} -- --id=@${pif} get Port ${pif} -- --id=@m create Mirror name=${pif}-mirror select-src-port=@${pif} select-dst-port=@${pif} output-port=@${vif}
 done
