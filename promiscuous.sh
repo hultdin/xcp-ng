@@ -38,7 +38,7 @@ for uuid in `xe vif-list network-name-label=${pif} params=uuid | sed '/^\s*$/d' 
   else
     if [ `xe vif-param-get uuid=${uuid} param-name=other-config param-key=promiscuous` != "true" ]; then
       echo "xe vif-param-set uuid=${uuid} other-config:promiscuous=\"true\""
-      xe vif-param-set uuid=${uuid} other-config:promiscuous=\"true\"
+      xe vif-param-set uuid=${uuid} other-config:promiscuous="true"
     fi
   fi
 done
